@@ -73,8 +73,8 @@ class GameScene: SKScene {
     
     override func update(_ currentTime: TimeInterval) {
         
-        myFloor1.position = CGPoint.init(x: myFloor1.position.x - 10, y: myFloor1.position.y)
-        myFloor2.position = CGPoint.init(x: myFloor2.position.x - 10, y: myFloor2.position.y)
+        myFloor1.position = CGPoint.init(x: myFloor1.position.x - 4, y: myFloor1.position.y)
+        myFloor2.position = CGPoint.init(x: myFloor2.position.x - 4, y: myFloor2.position.y)
         
         if (!start){
             if (myFloor1.position.x < -myFloor1.size.width){
@@ -90,7 +90,7 @@ class GameScene: SKScene {
         }
         
         if (start) {
-            bird.position = CGPoint.init(x: bird.position.x - 10, y: bird.position.y)
+            bird.position = CGPoint.init(x: bird.position.x - 4, y: bird.position.y)
             
             if (myFloor1.position.x < -myFloor1.size.width){
                 jumpSpace = randomBetweenNumbers(firstNum: 50, secondNum: 200)
