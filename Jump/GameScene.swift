@@ -28,6 +28,10 @@ class GameScene: SKScene {
     override func didMove(to view: SKView) {
         self.backgroundColor = SKColor(red: 80.0/255.0, green: 192.0/255.0, blue: 203.0/255.0, alpha: 1.0)
         
+        let bgm = SKAudioNode(fileNamed: "tapslow.mp3")
+        bgm.autoplayLooped = true
+        addChild(bgm)
+        
         myBackground = SKSpriteNode(imageNamed: "background")
         myBackground.anchorPoint = CGPoint.zero
         myBackground.position = CGPoint.init(x: 0, y: 0)
@@ -114,8 +118,6 @@ class GameScene: SKScene {
                     birdJumpLength = myFloor1.size.width / 5
                 }
                 
-//                NSLog("JL: \(birdJumpLength), FL1: \(myFloor1.size.width), BirdPOS: \(bird.position.x)")
-                
             }else if (myFloor2.position.x < bird.position.x && bird.position.x < myFloor2.position.x + myFloor2.size.width){
                 
                 onFloor1 = false
@@ -126,16 +128,15 @@ class GameScene: SKScene {
                 }else{
                     birdJumpLength = myFloor2.size.width / 5
                 }
-//                NSLog("JL: \(birdJumpLength), FL2: \(myFloor2.size.width), BirdPOS: \(bird.position.x)")
             }
             
-            if (myFloor1.position.x + myFloor1.size.width - myFloor1.size.width / 5 < bird.position.x + bird.size.width / 2 && bird.position.x - bird.size.width / 2 < myFloor1.position.x + myFloor1.size.width){
+            if (myFloor1.position.x + myFloor1.size.width < bird.position.x + bird.size.width / 2 && bird.position.x - bird.size.width / 2 < myFloor1.position.x + myFloor1.size.width + myFloor1.size.width / 5 ){
                 NSLog("im on floor1 edge gotta jump")
                 
                 bird.position.x = myFloor2.position.x + bird.size.width / 2
                 firstJump = true
                 
-            }else if (myFloor2.position.x + myFloor2.size.width - myFloor2.size.width / 5  < bird.position.x + bird.size.width / 2 && bird.position.x - bird.size.width / 2 < myFloor2.position.x + myFloor2.size.width){
+            }else if (myFloor2.position.x + myFloor2.size.width < bird.position.x + bird.size.width / 2 && bird.position.x - bird.size.width / 2 < myFloor2.position.x + myFloor2.size.width + myFloor2.size.width / 5  ){
                 NSLog("im on floor2 edge gotta jump")
                 
                 bird.position.x = myFloor1.position.x + bird.size.width / 2
