@@ -9,11 +9,12 @@
 import SpriteKit
 import GameplayKit
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var start = Bool(false)
     var onFloor1 = Bool(false)
     var onFloor2 = Bool(false)
+    var gameBorder = SKPhysicsBody()
     var myBackground = SKSpriteNode()
     var myFloor1 = SKSpriteNode()
     var myFloor2 = SKSpriteNode()
@@ -26,12 +27,31 @@ class GameScene: SKScene {
     var floorLength = CGFloat(100)
     var jumpNumber = 5
     
+    struct PhysicsCategory {
+        static let None : UInt32 = 0
+        static let All  : UInt32 = UInt32.max
+        static let Bird : UInt32 = 0b1
+        static let Border : UInt32 = 0b10
+    }
+    
     override func didMove(to view: SKView) {
+        
+        //        physicsWorld.gravity = CGVector.init(dx: 0, dy: -10)
+        physicsWorld.gravity = CGVector.zero
+        physicsWorld.contactDelegate = self
+        
         self.backgroundColor = SKColor(red: 80.0/255.0, green: 192.0/255.0, blue: 203.0/255.0, alpha: 1.0)
         
         let bgm = SKAudioNode(fileNamed: "tapslow.mp3")
         bgm.autoplayLooped = true
         addChild(bgm)
+        
+        gameBorder = SKPhysicsBody.init(edgeLoopFrom: self.frame)
+        gameBorder.isDynamic = true
+        gameBorder.categoryBitMask = PhysicsCategory.Border
+        gameBorder.contactTestBitMask = PhysicsCategory.Bird
+        gameBorder.collisionBitMask = PhysicsCategory.None
+        gameBorder.usesPreciseCollisionDetection = true
         
         myBackground = SKSpriteNode(imageNamed: "background")
         myBackground.anchorPoint = CGPoint.zero
@@ -67,6 +87,12 @@ class GameScene: SKScene {
         bird.size.width = bird.size.width / 10
         bird.size.height = bird.size.height / 10
         
+        bird.physicsBody = SKPhysicsBody(rectangleOf: bird.size)
+        bird.physicsBody?.isDynamic = true
+        bird.physicsBody?.categoryBitMask = PhysicsCategory.Bird
+        bird.physicsBody?.contactTestBitMask = PhysicsCategory.Border
+        bird.physicsBody?.collisionBitMask = PhysicsCategory.None
+        
         let animateBird = SKAction.animate(with: birdSprites, timePerFrame: 0.1)
         let repeatAction = SKAction.repeatForever(animateBird)
         self.bird.run(repeatAction)
@@ -78,6 +104,7 @@ class GameScene: SKScene {
         start = true
         
         bird.position.x = bird.position.x + jumpLength
+        //        bird.position.y = bird.position.y + 5
     }
     
     override func update(_ currentTime: TimeInterval) {
