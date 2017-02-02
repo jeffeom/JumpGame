@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		408DE53C1E42AEB5008BBCCC /* background_fire.png in Resources */ = {isa = PBXBuildFile; fileRef = 408DE53B1E42AEB5008BBCCC /* background_fire.png */; };
 		40F74DE51E3AA23000559245 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F74DE41E3AA23000559245 /* AppDelegate.swift */; };
 		40F74DE71E3AA23000559245 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 40F74DE61E3AA23000559245 /* GameScene.sks */; };
 		40F74DE91E3AA23000559245 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 40F74DE81E3AA23000559245 /* Actions.sks */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		408DE53B1E42AEB5008BBCCC /* background_fire.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background_fire.png; sourceTree = "<group>"; };
 		40F74DE11E3AA23000559245 /* Jump.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Jump.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		40F74DE41E3AA23000559245 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		40F74DE61E3AA23000559245 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -76,6 +78,7 @@
 				40F74DEE1E3AA23000559245 /* Main.storyboard */,
 				40F74DF11E3AA23000559245 /* Assets.xcassets */,
 				40F74E001E3AA65100559245 /* background.png */,
+				408DE53B1E42AEB5008BBCCC /* background_fire.png */,
 				40F74DFC1E3AA5B400559245 /* floor.png */,
 				40F74DFD1E3AA5B400559245 /* player.atlas */,
 				40F74E021E3B390500559245 /* tapslow.mp3 */,
@@ -154,6 +157,7 @@
 				40F74E031E3B390500559245 /* tapslow.mp3 in Resources */,
 				40F74DF51E3AA23000559245 /* LaunchScreen.storyboard in Resources */,
 				40F74DE91E3AA23000559245 /* Actions.sks in Resources */,
+				408DE53C1E42AEB5008BBCCC /* background_fire.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,6 +334,7 @@
 				40F74DFB1E3AA23000559245 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
