@@ -12,6 +12,7 @@ import GameplayKit
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var start = Bool(false)
+    var firstRun = Bool(true)
     var onFloor1 = Bool(false)
     var onFloor2 = Bool(false)
     var gameBorder = SKPhysicsBody()
@@ -69,14 +70,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         myFloor1 = SKSpriteNode(imageNamed: "floor")
         myFloor2 = SKSpriteNode(imageNamed: "floor")
         floorLength = myFloor1.size.width / 1.5
-        myFloor1.size.width = myFloor1.size.width / 1.5
-        myFloor2.size.width = myFloor2.size.width / 1.5
+        // initial floor length randomization
+        jumpNumber = Int(randomBetweenNumbers(firstNum: 6, secondNum: 7))
+        floorLength = bird.size.width * CGFloat(jumpNumber)
+        jumpLength = floorLength / CGFloat(jumpNumber)
+        myFloor1.size.width = floorLength
+        
+        myFloor2.size.width = floorLength
         myFloor1.anchorPoint = CGPoint.zero
         myFloor1.position = CGPoint.init(x: 0, y: 0)
         myFloor2.anchorPoint = CGPoint.zero
-        myFloor2.position = CGPoint.init(x: myFloor1.size.width, y: myFloor1.position.y + 4)
+        myFloor2.position = CGPoint.init(x: myFloor1.size.width, y: myFloor1.position.y)
         addChild(self.myFloor1)
         addChild(self.myFloor2)
+        
         
         birdSprites.append(birdAtlas.textureNamed("player1"))
         birdSprites.append(birdAtlas.textureNamed("player2"))
@@ -116,12 +123,30 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             // floor 1 is moved out create new floor 1
             if (myFloor1.position.x < -myFloor1.size.width){
+                
+                jumpNumber = Int(randomBetweenNumbers(firstNum: 6, secondNum: 7))
+                
                 myFloor1.position = CGPoint.init(x: myFloor2.position.x + myFloor2.size.width, y: myFloor1.position.y)
+                
+                floorLength = bird.size.width * CGFloat(jumpNumber)
+                
+                jumpLength = floorLength / CGFloat(jumpNumber)
+                
+                myFloor1.size.width = floorLength
             }
             
             // floor 2 is moved out create new floor 2
             if (myFloor2.position.x < -myFloor2.size.width){
+                
+                jumpNumber = Int(randomBetweenNumbers(firstNum: 6, secondNum: 7))
+                
                 myFloor2.position = CGPoint.init(x: myFloor1.position.x + myFloor1.size.width, y: myFloor2.position.y)
+                
+                floorLength = bird.size.width * CGFloat(jumpNumber)
+                
+                jumpLength = floorLength / CGFloat(jumpNumber)
+                
+                myFloor2.size.width = floorLength
             }
         }
         
@@ -138,13 +163,53 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 // send floor1 to only show half of the screen
                 if ( -myFloor1.size.width / 2 - 10 < myFloor1.position.x ){
-                    myFloor1.position = CGPoint.init(x: myFloor1.position.x - 6, y: myFloor1.position.y)
-                    bird.position = CGPoint.init(x: bird.position.x - 6, y: bird.position.y)
+                    myFloor1.position = CGPoint.init(x: myFloor1.position.x - 4, y: myFloor1.position.y)
+                    bird.position = CGPoint.init(x: bird.position.x - 4, y: bird.position.y)
+                    
+                    // if bird is too far right of the screen move camera faster
+                    if (self.frame.size.width - 100 < bird.position.x && bird.position.x < self.frame.size.width + 100){
+                        myFloor1.position = CGPoint.init(x: myFloor1.position.x - 15, y: myFloor1.position.y)
+                        bird.position = CGPoint.init(x: bird.position.x - 15, y: bird.position.y)
+                        
+                        // send floor2 to flow along with floor1
+                        if (-myFloor2.size.width - 1 < myFloor2.position.x){
+                            myFloor2.position = CGPoint.init(x: myFloor2.position.x - 15, y: myFloor2.position.y)
+                        }
+                        
+                    // if bird is too far left of the screen move camera slower
+                    }else if(bird.position.x < 50){
+                        myFloor1.position = CGPoint.init(x: myFloor1.position.x + 3, y: myFloor1.position.y)
+                        bird.position = CGPoint.init(x: bird.position.x + 3, y: bird.position.y)
+                        
+                        // send floor2 to flow along with floor1
+                        if (-myFloor2.size.width - 1 < myFloor2.position.x){
+                            myFloor2.position = CGPoint.init(x: myFloor2.position.x + 3, y: myFloor2.position.y)
+                        }
+                        
+                    }
                     
                     // send floor2 to flow along with floor1
                     if (-myFloor2.size.width - 1 < myFloor2.position.x){
-                        myFloor2.position = CGPoint.init(x: myFloor2.position.x - 6, y: myFloor2.position.y)
+                        myFloor2.position = CGPoint.init(x: myFloor2.position.x - 4, y: myFloor2.position.y)
                     }
+                }
+                
+                if firstRun{
+                    
+                    // if bird is near the start of the floor send to start of the floor
+                    
+                    if (bird.position.x < myFloor1.position.x + myFloor1.size.width / 2){
+                        bird.position.x = myFloor1.position.x + bird.size.width / 2
+                    }
+                    
+                    // if bird is near the end send to the start of the next floor
+                    
+                    if (myFloor1.position.x + myFloor1.size.width / 2 < bird.position.x){
+                        bird.position.x = myFloor2.position.x + bird.size.width / 2
+                    }
+                    
+                    
+                    firstRun = false
                 }
                 
                 // if the bird is on the second floor
@@ -156,13 +221,51 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 // send floor2 to only show half of the screen
                 if ( -myFloor2.size.width / 2 - 10 < myFloor2.position.x ){
-                    myFloor2.position = CGPoint.init(x: myFloor2.position.x - 6, y: myFloor2.position.y)
-                    bird.position = CGPoint.init(x: bird.position.x - 6, y: bird.position.y)
+                    myFloor2.position = CGPoint.init(x: myFloor2.position.x - 4, y: myFloor2.position.y)
+                    bird.position = CGPoint.init(x: bird.position.x - 4, y: bird.position.y)
+                    
+                    // if bird is too far right of the screen move camera faster
+                    if (self.frame.size.width - 100 < bird.position.x && bird.position.x < self.frame.size.width + 100){
+                        myFloor2.position = CGPoint.init(x: myFloor2.position.x - 15, y: myFloor2.position.y)
+                        bird.position = CGPoint.init(x: bird.position.x - 15, y: bird.position.y)
+                        
+                        // send floor1 to flow along with floor2
+                        if (-myFloor1.size.width - 1 < myFloor1.position.x){
+                            myFloor1.position = CGPoint.init(x: myFloor1.position.x - 15, y: myFloor1.position.y)
+                        }
+                    
+                    // if bird is too far left of the screen move camera slower
+                    }else if(bird.position.x < 50){
+                        myFloor2.position = CGPoint.init(x: myFloor2.position.x + 3, y: myFloor1.position.y)
+                        bird.position = CGPoint.init(x: bird.position.x + 3, y: bird.position.y)
+                        
+                        // send floor1 to flow along with floor2
+                        if (-myFloor1.size.width - 1 < myFloor1.position.x){
+                            myFloor1.position = CGPoint.init(x: myFloor1.position.x + 3, y: myFloor1.position.y)
+                        }
+                        
+                    }
                     
                     // send floor1 to flow along with floor2
                     if (-myFloor1.size.width - 1 < myFloor1.position.x){
-                        myFloor1.position = CGPoint.init(x: myFloor1.position.x - 6, y: myFloor1.position.y)
+                        myFloor1.position = CGPoint.init(x: myFloor1.position.x - 4, y: myFloor1.position.y)
                     }
+                }
+                
+                if firstRun{
+                    // if bird is near the start of the floor send to start of the floor
+                    
+                    if (bird.position.x < myFloor2.position.x + myFloor2.size.width / 2){
+                        bird.position.x = myFloor2.position.x + bird.size.width / 2
+                    }
+                    
+                    // if bird is near the end send to the start of the next floor
+                    
+                    if (myFloor2.position.x + myFloor2.size.width / 2 < bird.position.x){
+                        bird.position.x = myFloor1.position.x + bird.size.width / 2
+                    }
+                    
+                    firstRun = false
                 }
             }
             
@@ -205,58 +308,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 bird.position.x = myFloor2.position.x + bird.size.width / 2
                 
-                // within the death area after floor 2
+            // within the death area after floor 2
             }else if (myFloor2.position.x + myFloor2.size.width - bird.size.width / 2 + 10 < bird.position.x && bird.position.x < myFloor2.position.x + myFloor2.size.width + holeLength + bird.size.width / 2 - 10){
                 NSLog("im on floor2 edge gotta jump")
                 myLabel.text = String("Jump \(jumpNumber) times!")
                 
                 bird.position.x = myFloor1.position.x + bird.size.width / 2
             }
-            
-            //            bird.position = CGPoint.init(x: bird.position.x - 4, y: bird.position.y)
-            //
-            //            // if floor 1 is moved out of the screen create new floor 1
-            //            if (myFloor1.position.x < -myFloor1.size.width - 20){
-            //                jumpNumber = Int(randomBetweenNumbers(firstNum: 5, secondNum: 10))
-            //
-            //                myLabel.text = String("Next Jump: \(jumpNumber)")
-            //
-            //                holeLength = randomBetweenNumbers(firstNum: 80, secondNum: 120)
-            //
-            //                myFloor1.position = CGPoint.init(x: myFloor2.position.x + myFloor2.size.width + holeLength, y: myFloor1.position.y)
-            //
-            //                floorLength = bird.size.width * CGFloat(jumpNumber)
-            //                NSLog("FloorLength: \(floorLength), JumpNumber: \(jumpNumber)")
-            //
-            //                jumpLength = floorLength / CGFloat(jumpNumber)
-            //
-            //                myFloor1.size.width = floorLength
-            //            }
-            //
-            //            // if floor 2 is moved out of the screen create new floor 2
-            //            if (myFloor2.position.x < -myFloor2.size.width - 20){
-            //                jumpNumber = Int(randomBetweenNumbers(firstNum: 5, secondNum: 10))
-            //
-            //                myLabel.text = String("Next Jump: \(jumpNumber)")
-            //
-            //                holeLength = randomBetweenNumbers(firstNum: 80, secondNum: 120)
-            //
-            //                myFloor2.position = CGPoint.init(x: myFloor1.position.x + myFloor1.size.width + holeLength, y: myFloor2.position.y)
-            //
-            //                floorLength = bird.size.width * CGFloat(jumpNumber)
-            //                NSLog("FloorLength: \(floorLength), JumpNumber: \(jumpNumber)")
-            //
-            //                jumpLength = floorLength / CGFloat(jumpNumber)
-            //
-            //                myFloor2.size.width = floorLength
-            //            }
-            //
         }
     }
     
     func randomBetweenNumbers(firstNum: CGFloat, secondNum: CGFloat) -> CGFloat{
         
         return CGFloat(arc4random()) / CGFloat(UINT32_MAX) * abs(firstNum - secondNum) + min(firstNum, secondNum)
-        
     }
 }
